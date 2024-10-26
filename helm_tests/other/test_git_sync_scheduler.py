@@ -333,17 +333,18 @@ class TestGitSyncSchedulerTest:
         )
 
     def test_extra_volume_and_git_sync_extra_volume_mount(self):
+        {{- $executorsLabel := join "-" .Values.executor -}}
         docs = render_chart(
             values={
                 "executor": "CeleryExecutor",
                 "scheduler": {
-                    "extraVolumes": [{"name": "test-volume-{{ .Values.executor }}", "emptyDir": {}}],
+                    "extraVolumes": [{"name": "test-volume-{{ $executorsLabel }}", "emptyDir": {}}],
                 },
                 "dags": {
                     "gitSync": {
                         "enabled": True,
                         "extraVolumeMounts": [
-                            {"mountPath": "/opt/test", "name": "test-volume-{{ .Values.executor }}"}
+                            {"mountPath": "/opt/test", "name": "test-volume-{{ $executorsLabel }}"}
                         ],
                     }
                 },
