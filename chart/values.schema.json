@@ -684,18 +684,24 @@
         },
         "executor": {
             "description": "Airflow executor.",
-            "type": "string",
+            "type": "array",
             "x-docsSection": "Common",
-            "default": "CeleryExecutor",
-            "enum": [
-                "LocalExecutor",
-                "LocalKubernetesExecutor",
-                "CeleryExecutor",
-                "KubernetesExecutor",
-                "CeleryKubernetesExecutor",
-                "airflow.providers.amazon.aws.executors.batch.AwsBatchExecutor",
-                "airflow.providers.amazon.aws.executors.ecs.AwsEcsExecutor"
-            ]
+            "default": ["CeleryExecutor"],
+            "items": {
+                "enum": [
+                    "LocalExecutor",
+                    "LocalKubernetesExecutor",
+                    "CeleryExecutor",
+                    "KubernetesExecutor",
+                    "CeleryKubernetesExecutor",
+                    "airflow.providers.amazon.aws.executors.batch.AwsBatchExecutor",
+                    "airflow.providers.amazon.aws.executors.ecs.AwsEcsExecutor"
+                ],
+                "description": "Either a single executor or two executors may be chosen."
+            },
+            "minItems": 1,
+            "maxItems": 2,
+            "uniqueItems": true
         },
         "allowPodLaunching": {
             "description": "Whether various Airflow components launch pods.",
