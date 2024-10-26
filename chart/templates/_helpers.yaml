@@ -1124,3 +1124,20 @@ capabilities:
   {{- end -}}
   {{- $usingWorkerLaunchExecutor -}}
 {{- end -}}
+
+{{- define "usingLocalExecutor" }}
+  {{- $localExecutors := list "LocalExecutor" "LocalKubernetesExecutor" }}
+  {{- $usingLocalExecutor := false -}}
+  {{- range $local := $localExecutors -}}
+    {{- range $executor := $.Values.executor -}}
+      {{- if eq $local $executor -}}
+        {{- $usingLocalExecutor = true -}}
+        {{- break -}}
+      {{- end -}}
+    {{- end -}}
+    {{- if $usingLocalExecutor -}}
+      {{- break -}}
+    {{- end -}}
+  {{- end -}}
+  {{- $usingLocalExecutor -}}
+{{- end -}}
