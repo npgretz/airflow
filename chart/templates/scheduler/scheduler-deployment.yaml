@@ -21,15 +21,13 @@
 ## Airflow Scheduler Deployment/StatefulSet
 #################################
 {{- if .Values.scheduler.enabled }}
-# Are we using a local executor?
-{{- $local := contains "Local" .Values.executor }}
 # Is persistence enabled on the _workers_?
-# This is important because in $local mode, the scheduler assumes the role of the worker
+# This is important because in $usingLocalExecutor mode, the scheduler assumes the role of the worker
 {{- $persistence := .Values.workers.persistence.enabled }}
 # If we're using a StatefulSet
-{{- $stateful := and $local $persistence }}
-# We can skip DAGs mounts on scheduler if dagProcessor is enabled, except with $local mode
-{{- $localOrDagProcessorDisabled := or (not .Values.dagProcessor.enabled) $local }}
+{{- $stateful := and (include $usingLocalExecutor) $persistence }}
+# We can skip DAGs mounts on scheduler if dagProcessor is enabled, except with $usingLocalExecutor mode
+{{- $localOrDagProcessorDisabled := or (not .Values.dagProcessor.enabled) (include $usingLocalExecutor) }}
 # If we're using elasticsearch logging
 {{- $elasticsearch := .Values.elasticsearch.enabled }}
 {{- $nodeSelector := or .Values.scheduler.nodeSelector .Values.nodeSelector }}
@@ -217,7 +215,7 @@ spec:
                 {{- else }}
                   {{- include "scheduler_startup_check_command" . | indent 14 }}
                 {{- end }}
-          {{- if and $local (not $elasticsearch) }}
+          {{- if and (include $usingLocalExecutor) (not $elasticsearch) }}
           # Serve logs if we're in local mode and we don't have elasticsearch enabled.
           ports:
             - name: worker-logs

@@ -20,7 +20,7 @@
 ################################
 ## Pgbouncer NetworkPolicy
 #################################
-{{- $workersKedaEnabled := and .Values.workers.keda.enabled (has .Values.executor (list "CeleryExecutor" "CeleryKubernetesExecutor")) }}
+{{- $workersKedaEnabled := and .Values.workers.keda.enabled (or (has "CeleryExecutor" .Values.executor) (has "CeleryKubernetesExecutor" .Values.executor)) }}
 {{- $triggererEnabled := and (semverCompare ">=2.2.0" .Values.airflowVersion) .Values.triggerer.enabled }}
 {{- $triggererKedaEnabled := and $triggererEnabled .Values.triggerer.keda.enabled }}
 {{- if and .Values.pgbouncer.enabled .Values.networkPolicies.enabled }}
